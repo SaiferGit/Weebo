@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "69019373118",
+    "firebase_url": "https://weebo-b5f8c.firebaseio.com",
+    "project_id": "weebo-b5f8c",
+    "storage_bucket": "weebo-b5f8c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69019373118:android:59b022503cc89934",
+        "android_client_info": {
+          "package_name": "com.example.weebo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69019373118-sf52ujlfc979u58qndhdfqsfo6jah83h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.weebo",
+            "certificate_hash": "b7858a80430922f46a866e732eb290bde3012397"
+          }
+        },
+        {
+          "client_id": "69019373118-gqb9k19mhapb1ki7vvdn3okbr2qurrqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChUm-lrYnrTmuFcuspEY3GZeYZGISEZZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69019373118-gqb9k19mhapb1ki7vvdn3okbr2qurrqa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
