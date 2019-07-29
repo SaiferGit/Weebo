@@ -4,28 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashActivity">
+    tools:context=".SplashActivity"
+    android:background="@color/colorAccent">
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="167dp" />
-
+        android:layout_marginTop="200dp"
+        android:src="@drawable/applogo"
+        android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome to Digital Ration"
-        android:layout_below="@+id/imageView2"
-        android:layout_centerHorizontal="true"
-        android:textSize="30dp"/>
+        android:layout_marginTop="569dp"
+        android:gravity="center"
+        android:text="POWERED BY"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
-
-
-
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="332dp"
+        android:layout_height="73dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="600dp"
+        android:src="@drawable/teamlogo"
+        android:layout_marginBottom="90dp"/>
 
 
 </RelativeLayout>
