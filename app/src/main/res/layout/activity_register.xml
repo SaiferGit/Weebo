@@ -1,9 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".RegisterActivity"
+    android:background="@color/colorAccent">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/register_image"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:foregroundGravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/loginlogo" />
+
+    <TextView
+        android:id="@+id/register_status"
+        android:layout_width="412dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/register_image"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="-6dp"
+        android:layout_marginEnd="0dp"
+        android:background="@color/colorAccent"
+        android:text="Account Login"
+        android:gravity="center"
+        android:textColor="#263238"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/register_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/register_status"
+        android:hint="Email..."
+        android:inputType="textEmailAddress"
+        android:background="@drawable/edit_text_bg"
+        android:padding="4dp"
+        android:textColor="#37474F"
+        android:textStyle="bold"
+        android:drawableStart="@drawable/email"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        />
+
+    <EditText
+        android:id="@+id/register_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/register_email"
+        android:hint="Password..."
+        android:inputType="textPassword"
+        android:background="@drawable/edit_text_bg"
+        android:padding="4dp"
+        android:textColor="#37474F"
+        android:textStyle="bold"
+        android:drawableStart="@drawable/password"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        />
+
+
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="262dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/register_password"
+        android:layout_marginLeft="19dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_corners"
+        android:padding="4dp"
+        android:text="Create Account"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/already_have_account_link"
+        android:layout_width="375dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/register_button"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="Already have an account? Login Now!"
+        android:textColor="#263238"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

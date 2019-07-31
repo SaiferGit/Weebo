@@ -25,20 +25,21 @@
                 android:layout_marginTop="30dp"
                 android:foregroundGravity="center"
                 android:scaleType="fitCenter"
-                android:src="@drawable/applogo" />
+                android:src="@drawable/loginlogo" />
 
             <TextView
                 android:id="@+id/login_status"
-                android:layout_width="wrap_content"
+                android:layout_width="412dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/login_image"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="130dp"
+                android:layout_marginStart="0dp"
                 android:layout_marginTop="-6dp"
-                android:layout_marginEnd="119dp"
+                android:layout_marginEnd="0dp"
                 android:background="@color/colorAccent"
                 android:text="Account Login"
+                android:gravity="center"
                 android:textColor="#263238"
                 android:textSize="25dp"
                 android:textStyle="bold" />
@@ -114,19 +115,18 @@
 
             <TextView
                 android:id="@+id/need_new_account_link"
-                android:layout_width="357dp"
-                android:layout_height="64dp"
+                android:layout_width="375dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/login_button"
                 android:layout_alignParentStart="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="-4dp"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
                 android:text="Don't have an account? Register Here!"
                 android:textColor="#263238"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:gravity="center"
-                />
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/phone_login_button"

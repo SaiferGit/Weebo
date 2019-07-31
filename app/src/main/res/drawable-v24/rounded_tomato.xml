@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#AB47BC"/>
+            <solid android:color="#263238"/>
 
             <!--corners allow us to make the rounded corners button-->
             <corners android:radius="25dp" />
