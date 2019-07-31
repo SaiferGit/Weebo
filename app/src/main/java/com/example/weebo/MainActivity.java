@@ -6,7 +6,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,12 +19,18 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout myTabLayout;
     private TabsAccessorAdapter myTabsAccessorAdapter; // accessing the class "TabAccessorAdapter" from MainActivity
 
+    // defining firebase services
     private FirebaseUser currentUser;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // initializing firebase services
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser(); // getting the current user.
 
         // referencing variables with layout
         mToolbar = (Toolbar) findViewById(R.id.main_page_toolbar);
@@ -56,5 +65,38 @@ public class MainActivity extends AppCompatActivity {
 
         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(loginIntent);
+    }
+
+    // by this method we can access the options inside the menu folder
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.options_menu, menu); // linking up with menu option resource file
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+         super.onOptionsItemSelected(item);
+
+         if(item.getItemId() == R.id.main_logout_option)
+         {
+             mAuth.signOut();
+             sendUserToLoginActivity();
+
+         }
+
+        if(item.getItemId() == R.id.main_settings_option)
+        {
+
+        }
+
+        if(item.getItemId() == R.id.main_find_friends_option)
+        {
+
+        }
+
+        return true;
     }
 }

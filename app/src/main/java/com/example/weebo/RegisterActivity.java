@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -26,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // for firebase authentication
     private FirebaseAuth mAuth;
+    private DatabaseReference rootRef; // for referencing firebase database root
 
     // for displaying progress dialog
     private ProgressDialog loadingBar;
@@ -37,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // initializing firebase services
         mAuth = FirebaseAuth.getInstance();
+        rootRef = FirebaseDatabase.getInstance().getReference(); // referencing the firebase db, for our case it is referencing weebo-b58fc
 
         //defining variables with layouts
         InitializeFields();
@@ -76,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        else if (TextUtils.isEmpty(pass) ){
+        else if (TextUtils.isEmpty(confirmpass) ){
             userConfirmPassword.requestFocus();
             userConfirmPassword.setError("This Field is required to save your password!");
             return;
@@ -105,7 +109,11 @@ public class RegisterActivity extends AppCompatActivity {
                             //if the user is authenticated successfully
                             if(task.isSuccessful())
                             {
-                                sendUserToLoginActivity();
+                                //if the task is successful then store the mail and pass
+                                String currenUserID = mAuth.getCurrentUser().getUid();
+                                rootRef.child("Users").child(currenUserID).setValue("");
+
+                                sendUserToMainActivity();
                                 Toast.makeText(RegisterActivity.this,"Account Created Successfully..", Toast.LENGTH_LONG).show();
                                 loadingBar.dismiss();
                             }
@@ -119,6 +127,14 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void sendUserToMainActivity() {
+        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+        // user cant' go back to register activity once he reaches to main activity
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        finish();
     }
 
     private void sendUserToLoginActivity() {
