@@ -1,13 +1,17 @@
 package com.example.weebo;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +22,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 
@@ -28,12 +38,17 @@ public class SettingsActivity extends AppCompatActivity {
     private Button updateAccountSettings;
     private EditText userName, userStatus;
     private CircleImageView userProfileImage;
+    private ProgressDialog loadingBar;
 
     private String currentUserID;
 
     // defining firebase services
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
+    private StorageReference userProfileImageRef; // in userProfileImageRef folder, we will store the profile image only
+
+
+    private static final int galleryPick = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +59,8 @@ public class SettingsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         rootRef = FirebaseDatabase.getInstance().getReference();
+        userProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
+
 
         // defining variables with layouts
         InitializeFields();
@@ -58,6 +75,16 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         retrieveUserInfo();
+
+        userProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*"); // type of file that they should choose
+                startActivityForResult(galleryIntent, galleryPick);
+            };
+        });
     }
 
 
@@ -66,6 +93,82 @@ public class SettingsActivity extends AppCompatActivity {
         userName = (EditText) findViewById(R.id.set_user_name);
         userStatus = (EditText) findViewById(R.id.set_profile_status);
         userProfileImage = (CircleImageView) findViewById(R.id.set_profile_image);
+        loadingBar = new ProgressDialog(this);
+
+    }
+
+    // this method will get the result of the image that is selelcted
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == galleryPick && resultCode == RESULT_OK && data != null)
+        {
+            Uri imageUri = data.getData();
+
+            // start picker to get image for cropping and then use the image in cropping activity
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1,1)
+                    .start(this);
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK)
+            {
+                loadingBar.setTitle("Set Profile Image");
+                loadingBar.setMessage("Please wait, your profile image is updating");
+                loadingBar.setCanceledOnTouchOutside(false);
+                loadingBar.show();
+
+                Uri resultUri = result.getUri();
+
+                // storing the image into firebase storage
+                StorageReference filePath = userProfileImageRef.child(currentUserID + ".jpg");
+
+                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            Toast.makeText(SettingsActivity.this, "Profile Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
+
+                            final String downloadedUrl = task.getResult().getMetadata().getReference().getDownloadUrl().toString(); // getting the link of the profile image from firebase storage
+                            // reference to our app is rootRef
+                            rootRef.child("Users").child(currentUserID).child("image")
+                                    .setValue(downloadedUrl)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                           if(task.isSuccessful())
+                                           {
+                                               Toast.makeText(SettingsActivity.this, "Image Stored into DB successfully", Toast.LENGTH_SHORT).show();
+                                                loadingBar.dismiss();
+                                           }
+                                           else
+                                           {
+                                               String msg = task.getException().toString();
+                                               Toast.makeText(SettingsActivity.this, "Error: " +msg, Toast.LENGTH_SHORT).show();
+                                                loadingBar.dismiss();
+                                           }
+                                        }
+                                    });
+                        }
+                        else
+                        {
+                            String msg = task.getException().toString();
+                            Toast.makeText(SettingsActivity.this, "Error: " + msg, Toast.LENGTH_SHORT).show();
+                            loadingBar.dismiss();
+                        }
+                    }
+                });
+            }
+            else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
+            {
+                Exception error = result.getError();
+            }
+        }
 
     }
 
@@ -125,6 +228,10 @@ public class SettingsActivity extends AppCompatActivity {
 
                             userName.setText(retrieveUserName);
                             userStatus.setText(retrieveUserStatus);
+                            // using picasso library we will display the profile image
+                            Picasso.get().load(retrieveProfileImage).placeholder(R.drawable.profile_image).into(userProfileImage);
+
+
                         }
 
                         // user jodi dp na diye thake taile
@@ -154,9 +261,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SettingsActivity.this, MainActivity.class);
-
-        // user cant' go back to login activity once he reaches to main activity
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         startActivity(mainIntent);
         finish();

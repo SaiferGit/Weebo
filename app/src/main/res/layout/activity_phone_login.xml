@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PhoneLoginActivity"
+    android:background="@color/shada">
+
+    <ImageView
+        android:id="@+id/login_image"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:foregroundGravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/loginlogo" />
+
+    <TextView
+        android:id="@+id/phone_login_status"
+        android:layout_width="412dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/login_image"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="-6dp"
+        android:layout_marginEnd="0dp"
+        android:background="@color/colorAccent"
+        android:text="Account Login"
+        android:gravity="center"
+        android:textColor="#263238"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/phone_number_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/phone_login_status"
+        android:background="@drawable/edit_text_bg"
+        android:padding="8dp"
+        android:hint="Write phone number here..."
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:drawableStart="@drawable/phone"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        />
+
+    <EditText
+        android:id="@+id/phone_verification_code_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edit_text_bg"
+        android:layout_below="@+id/phone_number_input"
+        android:padding="5dp"
+        android:hint="Write verification code here..."
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:drawableStart="@drawable/password"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        />
+
+
+    <Button
+        android:id="@+id/phone_send_ver_code_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Verification Code"
+        android:layout_below="@+id/phone_verification_code_input"
+        android:textAllCaps="false"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/rounded_tomato"
+        android:textColor="@android:color/background_light"
+        android:textSize="19sp"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        />
+
+    <Button
+        android:id="@+id/verify_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Verify"
+        android:layout_below="@+id/phone_send_ver_code_button"
+        android:textAllCaps="false"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/rounded_tomato"
+        android:textColor="@android:color/background_light"
+        android:textSize="19sp"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        />
+
+</RelativeLayout>
