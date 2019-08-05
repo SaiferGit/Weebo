@@ -26,7 +26,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private CircleImageView userProfileImage;
     private TextView userProfileName, userProfileStatus;
-    private Button sendMessageRequestButton;
+    private Button sendMessageRequestButton, declineMessageRequestButton;
 
     private DatabaseReference userRef, chatRequestRef;
     private FirebaseAuth mAuth;
@@ -50,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
         userProfileName = (TextView) findViewById(R.id.visit_user_name);
         userProfileStatus = (TextView) findViewById(R.id.visit_profile_status);
         sendMessageRequestButton = (Button) findViewById(R.id.send_message_request_button);
+        declineMessageRequestButton = (Button) findViewById(R.id.decline_message_request_button);
         current_state = "new";
 
         retrieveUserInfo();
@@ -96,7 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
         // chatRequestRef = rootRef/Chat Requests
         // chat Requests er jodi child e jodi sender theke thake ebong oi sender er jodi
         // receiver theke thake taile check the request type. jodi request type sent hoi
-        // taile current state change kore diye button er naam change kore dilam
+        // taile current state change kore diye button er naam change kore cancel chat request dilam, as sender can send/cancel his request
         chatRequestRef.child(senderUserID)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -109,6 +110,26 @@ public class ProfileActivity extends AppCompatActivity {
                             {
                                 current_state = "request_sent";
                                 sendMessageRequestButton.setText("Cancel Chat Request");
+                            }
+
+                            // receiver portion: request_type jodi received hoi, maane receiver er phone e receiver er jonne eta received hobe.
+                            // taile current_state request received kore dilam and receiver send msg button take Accept chat request hishebe dekhbe.
+                            // moreover decline message request button ta invisible kora ache by default, etake visible kore dilam. ar otate click korle request cancel hoye jabe.
+                            // request cancel hoye gele amra abar button take invisible kore dibo receiver er jonne, so eita korechi cancelChatRequest() method er moddhe.
+
+                            else if(request_type.equals("received"))
+                            {
+                                current_state = "request_received";
+                                sendMessageRequestButton.setText("Accept ChatRequest");
+
+                                declineMessageRequestButton.setVisibility(View.VISIBLE);
+                                declineMessageRequestButton.setEnabled(true);
+                                declineMessageRequestButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        cancelChatRequest();
+                                    }
+                                });
                             }
                         }
                     }
@@ -140,7 +161,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         }
-        // if sender id = reciever id, we won't display the send message button
+        // if sender id = receiver id, we won't display the send message button
         else
         {
             sendMessageRequestButton.setVisibility(View.INVISIBLE);
@@ -167,6 +188,9 @@ public class ProfileActivity extends AppCompatActivity {
                                                 current_state = "new";
                                                 sendMessageRequestButton.setText("Send Message");
 
+                                                // receiver chat decline kore dile cancel msg button ta invisible kore dibo.
+                                                declineMessageRequestButton.setVisibility(View.INVISIBLE);
+                                                declineMessageRequestButton.setEnabled(false);
                                             }
                                         }
                                     });

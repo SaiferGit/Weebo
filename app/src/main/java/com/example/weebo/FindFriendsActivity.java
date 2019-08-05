@@ -49,6 +49,23 @@ public class FindFriendsActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Find Friends");
     }
 
+    @Override
+    public void onBackPressed() {
+
+        finish();
+        Intent intent = new Intent(FindFriendsActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==android.R.id.home)
+        {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     protected void onStart()
