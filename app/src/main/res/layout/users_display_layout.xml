@@ -8,8 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/users_profile_image"
@@ -77,7 +76,7 @@
                     android:text="Accept"
                     android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:background="@android:color/holo_green_light"
+                    android:background="@drawable/accept_button_bg"
                     android:visibility="invisible"
                     />
 
@@ -89,7 +88,7 @@
                     android:layout_marginStart="10dp"
                     android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:background="@android:color/holo_red_dark"
+                    android:background="@drawable/cancel_button_bg"
                     android:textColor="@android:color/background_light"
                     android:visibility="invisible"
                     />

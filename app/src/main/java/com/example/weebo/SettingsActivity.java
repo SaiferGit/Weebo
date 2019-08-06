@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -39,6 +40,8 @@ public class SettingsActivity extends AppCompatActivity {
     private EditText userName, userStatus;
     private CircleImageView userProfileImage;
     private ProgressDialog loadingBar;
+
+    private Toolbar mToolbar;
 
     private String currentUserID;
 
@@ -94,6 +97,12 @@ public class SettingsActivity extends AppCompatActivity {
         userStatus = (EditText) findViewById(R.id.set_profile_status);
         userProfileImage = (CircleImageView) findViewById(R.id.set_profile_image);
         loadingBar = new ProgressDialog(this);
+
+        mToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setTitle("Account Settings");
 
     }
 
@@ -187,11 +196,11 @@ public class SettingsActivity extends AppCompatActivity {
         else
         {
             // storing data into firebase using hash map
-            HashMap<String, String> profileMap = new HashMap<>();
+            HashMap<String, Object> profileMap = new HashMap<>();
                 profileMap.put("uid", currentUserID);
                 profileMap.put("name", setUserName);
                 profileMap.put("status", setStatus);
-            rootRef.child("Users").child(currentUserID).setValue(profileMap)
+            rootRef.child("Users").child(currentUserID).updateChildren(profileMap)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -261,7 +270,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void sendUserToMainActivity() {
         Intent mainIntent = new Intent(SettingsActivity.this, MainActivity.class);
-
+        // user cant' go back to main activity once he reaches to settings activity for not choosing his name
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
     }

@@ -185,6 +185,11 @@ public class ProfileActivity extends AppCompatActivity {
                     {
                         acceptChatRequest(); // he can accept it
                     }
+                    // if 2 contacts are already friends to each other then they can remove themselves from that
+                    if(current_state.equals("friends"))
+                    {
+                        removeSpecificContact();
+                    }
                 }
             });
         }
@@ -193,6 +198,38 @@ public class ProfileActivity extends AppCompatActivity {
         {
             sendMessageRequestButton.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void removeSpecificContact()
+    {
+        // remove korbo both user and reciever ID both
+        contactRef.child(senderUserID).child(receiverUserID)
+                .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful())
+                        {
+                            contactRef.child(receiverUserID).child(senderUserID)
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful())
+                                            {
+                                                sendMessageRequestButton.setEnabled(true);
+                                                current_state = "new";
+                                                sendMessageRequestButton.setText("Send Message");
+
+                                                // receiver chat decline kore dile cancel msg button ta invisible kore dibo.
+                                                declineMessageRequestButton.setVisibility(View.INVISIBLE);
+                                                declineMessageRequestButton.setEnabled(false);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                });
     }
 
     private void acceptChatRequest() {

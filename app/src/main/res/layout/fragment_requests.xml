@@ -3,15 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ContactsFragment"
-    android:background="@color/shada">
+    tools:context=".RequestsFragment">
 
+    <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/contacts_list"
+        android:id="@+id/chat_requests_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true" />
-
-
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>
