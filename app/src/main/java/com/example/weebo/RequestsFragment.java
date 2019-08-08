@@ -132,20 +132,27 @@ public class RequestsFragment extends Fragment {
                                         // accept button e user click korle
                                         holder.acceptButton.setOnClickListener(new View.OnClickListener() {
                                             @Override
-                                            public void onClick(View v) {
-                                                // contacts e jodi sender er vitor
+                                            public void onClick(View v)
+                                            {
+                                                // request list theke contact take remove kore dibo and contact list e add korbo
+                                                // contacts -> sender ID -> receiver id -> contact e jabo, then er value saved set korbo
+                                                // jodi eita successful hoi taile
                                                 contactsRef.child(currentUserID).child(list_user_id).child("Contact")
                                                         .setValue("Saved").addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if(task.isSuccessful())
                                                         {
+                                                            // contacts -> receiver id -> sender ID -> contact e jabo, then er value saved set korbo
+                                                            // jodi eita successful hoi taile
                                                             contactsRef.child(list_user_id).child(currentUserID).child("Contact")
                                                                     .setValue("Saved").addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful())
                                                                     {
+                                                                        // chat request theke ei duita user ke remove kore dibo
+                                                                        // and toast msg show korbo je contacts successfully added
                                                                         chatRequestsRef.child(currentUserID).child(list_user_id)
                                                                                 .removeValue()
                                                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -173,47 +180,39 @@ public class RequestsFragment extends Fragment {
                                                         }
                                                     }
                                                 });
+
                                             }
                                         });
 
                                         // cancel button e user click korle
                                         holder.cancelButton.setOnClickListener(new View.OnClickListener() {
                                             @Override
-                                            public void onClick(View v) {
-                                                // contacts e jodi sender er vitor
-                                                contactsRef.child(currentUserID).child(list_user_id).child("Contact")
-                                                        .setValue("Saved").addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful())
-                                                        {
-                                                            // jodi remove e click kori taile simply value 2 ta remove kore dibo, contact e save korar
-                                                            // kono pera nei. sweet and simple
-                                                            chatRequestsRef.child(currentUserID).child(list_user_id)
-                                                                    .removeValue()
-                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            if(task.isSuccessful())
-                                                                            {
-                                                                                chatRequestsRef.child(list_user_id).child(currentUserID)
-                                                                                        .removeValue()
-                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                            @Override
-                                                                                            public void onComplete(@NonNull Task<Void> task) {
-                                                                                                if(task.isSuccessful())
-                                                                                                {
-                                                                                                    Toast.makeText(getContext(), "Request Removed", Toast.LENGTH_SHORT).show();
-                                                                                                }
-                                                                                            }
-                                                                                        });
-                                                                            }
-                                                                        }
-                                                                    });
+                                            public void onClick(View v)
+                                            {
+                                                // jodi remove e click kori taile simply value 2 ta remove kore dibo, contact e save korar
+                                                // kono pera nei. sweet and simple
+                                                chatRequestsRef.child(currentUserID).child(list_user_id)
+                                                        .removeValue()
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful())
+                                                                {
+                                                                    chatRequestsRef.child(list_user_id).child(currentUserID)
+                                                                            .removeValue()
+                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                                    if(task.isSuccessful())
+                                                                                    {
+                                                                                        Toast.makeText(getContext(), "Request Removed", Toast.LENGTH_SHORT).show();
+                                                                                    }
+                                                                                }
+                                                                            });
+                                                                }
+                                                            }
+                                                        });
 
-                                                        }
-                                                    }
-                                                });
                                             }
                                         });
 
@@ -328,6 +327,96 @@ public class RequestsFragment extends Fragment {
 
                                     }
                                 });
+                            }
+
+                            // jodi request sent kori taile
+                            else if(type.equals("sent"))
+                            {
+                                Button request_sent_btn = holder.itemView.findViewById(R.id.request_accept_btn);
+                                request_sent_btn.setText("Request Sent");
+
+                                holder.itemView.findViewById(R.id.request_cancel_btn).setVisibility(View.INVISIBLE);
+
+                                userRef.child(list_user_id).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot)
+                                    {
+                                        if(dataSnapshot.hasChild("image"))
+                                        {
+                                            final String requestProfileImage = dataSnapshot.child("image").getValue().toString();
+
+
+                                            Picasso.get().load(requestProfileImage).placeholder(R.drawable.profile_image).into(holder.profileImage);
+
+                                        }
+                                        final String requestUserName = dataSnapshot.child("name").getValue().toString();
+                                        final String requestUserStatus = dataSnapshot.child("status").getValue().toString();
+
+                                        holder.userName.setText(requestUserName);
+                                        holder.userStatus.setText("you have sent a request to "+ requestUserName);
+
+                                        // holder er upore jodi click kori taile alert dialog box e bivinno option dekhabe
+                                        //
+                                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                // creating options for our dialog box
+                                                CharSequence options[] = new CharSequence[]
+                                                        {
+                                                                "Cancel Chat Request"
+                                                        };
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                                builder.setTitle("Already Sent Request"); // set the title
+                                                // jodi item gular upore click kore then
+                                                builder.setItems(options, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+
+                                                        if( which == 0)
+                                                        {
+                                                            // jodi remove e click kori taile simply value 2 ta remove kore dibo, contact e save korar
+                                                            // kono pera nei. sweet and simple
+                                                            chatRequestsRef.child(currentUserID).child(list_user_id)
+                                                                    .removeValue()
+                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                            if(task.isSuccessful())
+                                                                            {
+                                                                                chatRequestsRef.child(list_user_id).child(currentUserID)
+                                                                                        .removeValue()
+                                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                                if(task.isSuccessful())
+                                                                                                {
+                                                                                                    Toast.makeText(getContext(), "You have cancelled the chat request", Toast.LENGTH_SHORT).show();
+                                                                                                }
+                                                                                            }
+                                                                                        });
+                                                                            }
+                                                                        }
+                                                                    });
+
+                                                        }
+
+                                                    }
+                                                });
+
+                                                builder.show(); // builder show korbo
+
+                                            }
+                                        });
+
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
                             }
                         }
 

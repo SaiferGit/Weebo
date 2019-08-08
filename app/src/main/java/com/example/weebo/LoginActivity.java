@@ -18,6 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.w3c.dom.Text;
 
@@ -25,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // defining firebase services
     private FirebaseAuth mAuth;
+    private DatabaseReference usersRef;
 
     private Button loginButton, phoneloginbutton;
     private EditText userEmail, userPassword;
@@ -33,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     // for displaying progress dialog
     private ProgressDialog loadingBar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // initializing firebase services
         mAuth = FirebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         // defining variables with layouts
         InitializeFields();
@@ -104,9 +110,26 @@ public class LoginActivity extends AppCompatActivity {
                             //if the user is authenticated successfully
                             if(task.isSuccessful())
                             {
-                                sendUserToMainActivity();
-                                Toast.makeText(LoginActivity.this,"Logged in Successful..", Toast.LENGTH_LONG).show();
-                                loadingBar.dismiss();
+                                // every phone has a unique device token, when user is logged in with a new device
+                                // we will store that device token to see where we have to send the notification
+                                String currentUserID = mAuth.getCurrentUser().getUid(); // getting the currentUserID
+                                String deviceToken = FirebaseInstanceId.getInstance().getToken(); // getting the device Token
+
+                                usersRef.child(currentUserID).child("device_token")
+                                        .setValue(deviceToken)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    sendUserToMainActivity();
+                                                    Toast.makeText(LoginActivity.this,"Logged in Successful..", Toast.LENGTH_LONG).show();
+                                                    loadingBar.dismiss();
+                                                }
+                                            }
+                                        });
+
+
                             }
 
                             // if any error occurred

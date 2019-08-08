@@ -1,6 +1,7 @@
 package com.example.weebo;
 
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -10,11 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -50,6 +55,10 @@ public class SettingsActivity extends AppCompatActivity {
     private DatabaseReference rootRef;
     private StorageReference userProfileImageRef; // in userProfileImageRef folder, we will store the profile image only
 
+    private StorageReference storageReference;
+    private static final int IMAGE_REQUEST = 1;
+    private Uri imageUri;
+    private StorageTask uploadTask;
 
     private static final int galleryPick = 1;
 
@@ -63,6 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
         currentUserID = mAuth.getCurrentUser().getUid();
         rootRef = FirebaseDatabase.getInstance().getReference();
         userProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
+        storageReference = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
 
         // defining variables with layouts
@@ -238,8 +248,10 @@ public class SettingsActivity extends AppCompatActivity {
                             userName.setText(retrieveUserName);
                             userStatus.setText(retrieveUserStatus);
                             // using picasso library we will display the profile image
-                            Picasso.get().load(retrieveProfileImage).placeholder(R.drawable.profile_image).into(userProfileImage);
-
+                            //Picasso.get().load(retrieveProfileImage).placeholder(R.drawable.profile_image).into(userProfileImage);
+                            Glide.with(getApplicationContext())
+                                    .load(retrieveProfileImage)
+                                    .into(userProfileImage);
 
                         }
 

@@ -26,6 +26,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar; // for adding the toolbar
@@ -34,9 +38,12 @@ public class MainActivity extends AppCompatActivity {
     private TabsAccessorAdapter myTabsAccessorAdapter; // accessing the class "TabAccessorAdapter" from MainActivity
 
     // defining firebase services
-    private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
+
+
+
+    private String currentUserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         // initializing firebase services
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser(); // getting the current user.
         rootRef = FirebaseDatabase.getInstance().getReference();
 
         // referencing variables with layout
@@ -70,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        FirebaseUser currentUser = mAuth.getCurrentUser(); // getting the current user.
+
+
         // if the user is not authenticated, send user to login activity
         if(currentUser == null)
         {
@@ -78,8 +87,36 @@ public class MainActivity extends AppCompatActivity {
         // if the user is authenticated, we will verify the user existence
         else
         {
+            updateUserStatus("online");
+
             verifyUserExistence();
         }
+    }
+
+    // when a user minimize the app we need to show the user offline
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FirebaseUser currentUser = mAuth.getCurrentUser(); // getting the current user.
+
+        if(currentUser != null)
+        {
+            updateUserStatus("offline");
+        }
+
+    }
+
+    // if the app crashes then
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseUser currentUser = mAuth.getCurrentUser(); // getting the current user.
+
+        if(currentUser != null)
+        {
+            updateUserStatus("offline");
+        }
+
     }
 
     private void verifyUserExistence() {
@@ -130,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
 
          if(item.getItemId() == R.id.main_logout_option)
          {
+             updateUserStatus("offline");
+
              mAuth.signOut();
              sendUserToLoginActivity();
 
@@ -222,5 +261,27 @@ public class MainActivity extends AppCompatActivity {
 
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
+    }
+
+    private void updateUserStatus(String state)
+    {
+        String saveCurrentTime, saveCurrentDate;
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
+
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+
+        HashMap<String, Object> onlineStateMap = new HashMap<>();
+        onlineStateMap.put("time", saveCurrentTime);
+        onlineStateMap.put("date", saveCurrentDate);
+        onlineStateMap.put("state", state);
+
+        currentUserID = mAuth.getCurrentUser().getUid();
+
+        rootRef.child("Users").child(currentUserID).child("userState")
+                .updateChildren(onlineStateMap);
     }
 }

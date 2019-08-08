@@ -93,11 +93,37 @@ public class ChatsFragment extends Fragment {
                                 Picasso.get().load(retImage[0]).placeholder(R.drawable.profile_image).into(holder.profileImage);
 
                             }
+
                             final String retName = dataSnapshot.child("name").getValue().toString();
                             final String retstatus = dataSnapshot.child("status").getValue().toString();
 
                             holder.userName.setText(retName);
-                            holder.userStatus.setText("Last Seen: " + "\n" + "Date " + " Time" );
+
+
+                            // user er state dekhanor jonne
+                            if(dataSnapshot.child("userState").hasChild("state"))
+                            {
+                                String state = dataSnapshot.child("userState").child("state").getValue().toString();
+                                String date = dataSnapshot.child("userState").child("date").getValue().toString();
+                                String time = dataSnapshot.child("userState").child("time").getValue().toString();
+
+                                if(state.equals("online"))
+                                {
+                                    holder.userStatus.setText("online");
+                                }
+                                else if(state.equals("offline"))
+                                {
+                                    holder.userStatus.setText("Last Seen: " + date + " " + time );
+                                }
+                            }
+
+                            // for those user who didn't update their app
+                            else
+                            {
+                                holder.userStatus.setText("offline" );
+                            }
+
+
 
                             // when a user will click an item or user that is shown in chats fragment, the 1st user can click on any
                             // position and can chat with the specific user.
